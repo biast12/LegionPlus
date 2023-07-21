@@ -404,8 +404,8 @@ void LegionSettings::InitializeComponent()
 	this->ImageExportFormat->SetTabIndex(0);
 	this->ImageExportFormat->SetAnchor(Forms::AnchorStyles::Top | Forms::AnchorStyles::Left);
 	this->ImageExportFormat->SetDropDownStyle(Forms::ComboBoxStyle::DropDownList);
-	this->ImageExportFormat->Items.Add("DDS");
 	this->ImageExportFormat->Items.Add("PNG");
+	this->ImageExportFormat->Items.Add("DDS");
 	this->ImageExportFormat->Items.Add("TIFF");
 	this->ImageExportFormat->Items.Add("TGA");
 	this->groupBox5->AddControl(this->ImageExportFormat);
@@ -428,8 +428,8 @@ void LegionSettings::InitializeComponent()
 	this->TextExportFormat->SetTabIndex(0);
 	this->TextExportFormat->SetAnchor(Forms::AnchorStyles::Top | Forms::AnchorStyles::Left);
 	this->TextExportFormat->SetDropDownStyle(Forms::ComboBoxStyle::DropDownList);
-	this->TextExportFormat->Items.Add("CSV");
 	this->TextExportFormat->Items.Add("TXT");
+	this->TextExportFormat->Items.Add("CSV");
 	this->groupBox5->AddControl(this->TextExportFormat);
 
 	//
@@ -505,7 +505,7 @@ void LegionSettings::LoadSettings()
 	AudioExportFormat_t AudioFormat = (AudioExportFormat_t)ExportManager::Config.Get<System::SettingType::Integer>("AudioFormat");
 
 	if (!ExportManager::Config.Has("NormalRecalcType"))
-		NormalRecalcType = NormalRecalcType_t::OpenGl;
+		NormalRecalcType = NormalRecalcType_t::None;
 
 	switch (ModelFormat)
 	{
@@ -556,10 +556,10 @@ void LegionSettings::LoadSettings()
 
 	switch (ImageFormat)
 	{
-	case ImageExportFormat_t::Dds:
+	case ImageExportFormat_t::Png:
 		this->ImageExportFormat->SetSelectedIndex(0);
 		break;
-	case ImageExportFormat_t::Png:
+	case ImageExportFormat_t::Dds:
 		this->ImageExportFormat->SetSelectedIndex(1);
 		break;
 	case ImageExportFormat_t::Tiff:
@@ -572,10 +572,10 @@ void LegionSettings::LoadSettings()
 
 	switch (TextFormat)
 	{
-	case TextExportFormat_t::CSV:
+	case TextExportFormat_t::TXT:
 		this->TextExportFormat->SetSelectedIndex(0);
 		break;
-	case TextExportFormat_t::TXT:
+	case TextExportFormat_t::CSV:
 		this->TextExportFormat->SetSelectedIndex(1);
 		break;
 	}
@@ -652,10 +652,10 @@ void LegionSettings::OnClose(const std::unique_ptr<FormClosingEventArgs>& EventA
 
 	// Fetch settings from controls
 	auto ModelExportFormat = ModelExportFormat_t::Cast;
-	auto AnimExportFormat = AnimExportFormat_t::Cast;
-	auto ImageExportFormat = ImageExportFormat_t::Dds;
-	auto TextExportFormat = TextExportFormat_t::CSV;
-	auto NormalRecalcType = NormalRecalcType_t::OpenGl;
+	auto AnimExportFormat = AnimExportFormat_t::SEAnim;
+	auto ImageExportFormat = ImageExportFormat_t::Png;
+	auto TextExportFormat = TextExportFormat_t::TXT;
+	auto NormalRecalcType = NormalRecalcType_t::None;
 	auto AudioLanguage = MilesLanguageID::English;
 	auto MatCPUExportFormat = MatCPUExportFormat_t::None;
 	auto AudioFormat = AudioExportFormat_t::WAV;
@@ -712,7 +712,7 @@ void LegionSettings::OnClose(const std::unique_ptr<FormClosingEventArgs>& EventA
 		switch (ThisPtr->ImageExportFormat->SelectedIndex())
 		{
 		case 1:
-			ImageExportFormat = ImageExportFormat_t::Png;
+			ImageExportFormat = ImageExportFormat_t::Dds;
 			break;
 		case 2:
 			ImageExportFormat = ImageExportFormat_t::Tiff;
@@ -728,7 +728,7 @@ void LegionSettings::OnClose(const std::unique_ptr<FormClosingEventArgs>& EventA
 		switch (ThisPtr->TextExportFormat->SelectedIndex())
 		{
 		case 1:
-			TextExportFormat = TextExportFormat_t::TXT;
+			TextExportFormat = TextExportFormat_t::CSV;
 			break;
 		}
 	}
@@ -737,11 +737,11 @@ void LegionSettings::OnClose(const std::unique_ptr<FormClosingEventArgs>& EventA
 	{
 		switch (ThisPtr->NormalRecalcType->SelectedIndex())
 		{
-		case 0:
-			NormalRecalcType = NormalRecalcType_t::None;
-			break;
 		case 1:
 			NormalRecalcType = NormalRecalcType_t::DirectX;
+			break;
+		case 2:
+			NormalRecalcType = NormalRecalcType_t::OpenGl;
 			break;
 		}
 	}
@@ -779,8 +779,8 @@ void LegionSettings::OnClose(const std::unique_ptr<FormClosingEventArgs>& EventA
 		}
 	}
 
-	// have the settings actually changed?
 	bool bRefreshView = false;
+	bool bRefreshLoad = false;
 
 	if (ThisPtr->LoadModels->Checked() != ExportManager::Config.GetBool("LoadModels"))
 		bRefreshView = true;
@@ -806,6 +806,11 @@ void LegionSettings::OnClose(const std::unique_ptr<FormClosingEventArgs>& EventA
 		bRefreshView = true;
 	if (ThisPtr->ToggleUseFullPaths->Checked() != ExportManager::Config.GetBool("UseFullPaths"))
 		bRefreshView = true;
+	if ((uint32_t)AudioLanguage != ExportManager::Config.Get<System::SettingType::Integer>("AudioLanguage"))
+	{
+		bRefreshLoad = true;
+		bRefreshView = true;
+	}
 
 	ExportManager::Config.SetBool("LoadModels", ThisPtr->LoadModels->Checked());
 	ExportManager::Config.SetBool("LoadAnimations", ThisPtr->LoadAnimations->Checked());
@@ -845,13 +850,15 @@ void LegionSettings::OnClose(const std::unique_ptr<FormClosingEventArgs>& EventA
 
 	ExportManager::SaveConfigToDisk();
 
+	if(bRefreshLoad)
+		g_pLegionMain->RefreshLoad();
 	if(bRefreshView)
 		g_pLegionMain->RefreshView();
 }
 
 void LegionSettings::OnGithubClick(Forms::Control* Sender)
 {
-	Diagnostics::Process::Start("https://github.com/r-ex/LegionPlus");
+	Diagnostics::Process::Start("https://github.com/biast12/LegionPlus");
 }
 
 void LegionSettings::OnDiscordClick(Forms::Control* Sender)

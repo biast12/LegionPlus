@@ -156,10 +156,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 				wstring sFmt = cmdline.GetParamValue(L"--imgfmt");
 				sFmt = sFmt.ToLower();
 
-				if (sFmt == L"dds")
-					ImgFmt = ImageExportFormat_t::Dds;
 				if (sFmt == L"png")
 					ImgFmt = ImageExportFormat_t::Png;
+				if (sFmt == L"dds")
+					ImgFmt = ImageExportFormat_t::Dds;
 				if (sFmt == L"tiff")
 					ImgFmt = ImageExportFormat_t::Tiff;
 				if (sFmt == L"tga")
@@ -176,10 +176,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 				wstring sFmt = cmdline.GetParamValue(L"--textfmt");
 				sFmt = sFmt.ToLower();
 
-				if (sFmt == L"csv")
-					SubtFmt = TextExportFormat_t::CSV;
 				if (sFmt == L"txt")
 					SubtFmt = TextExportFormat_t::TXT;
+				if (sFmt == L"csv")
+					SubtFmt = TextExportFormat_t::CSV;
 
 				if (SubtFmt != (TextExportFormat_t)ExportManager::Config.Get<System::SettingType::Integer>("TextFormat"))
 					ExportManager::Config.Set<System::SettingType::Integer>("TextFormat", (uint32_t)SubtFmt);
@@ -201,6 +201,22 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 				if (NmlRecalcType != (NormalRecalcType_t)ExportManager::Config.Get<System::SettingType::Integer>("NormalRecalcType"))
 					ExportManager::Config.Set<System::SettingType::Integer>("NormalRecalcType", (uint32_t)NmlRecalcType);
+			}
+
+			if (cmdline.HasParam(L"--audiofmt"))
+			{
+				AudioExportFormat_t AudioExportFormat = (AudioExportFormat_t)ExportManager::Config.Get<System::SettingType::Integer>("AudioExportFormat");
+
+				wstring sFmt = cmdline.GetParamValue(L"--audiofmt");
+				sFmt = sFmt.ToLower();
+
+				if (sFmt == L"wav")
+					AudioExportFormat = AudioExportFormat_t::WAV;
+				if (sFmt == L"bink")
+					AudioExportFormat = AudioExportFormat_t::BinkA;
+
+				if (AudioExportFormat != (AudioExportFormat_t)ExportManager::Config.Get<System::SettingType::Integer>("AudioExportFormat"))
+					ExportManager::Config.Set<System::SettingType::Integer>("AudioExportFormat", (uint32_t)AudioExportFormat);
 			}
 
 			if (cmdline.HasParam(L"--audiolanguage"))
@@ -230,6 +246,10 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 					SubtFmt = MilesLanguageID::Mandarin;
 				if (sFmt == L"korean")
 					SubtFmt = MilesLanguageID::Korean;
+				if (sFmt == L"portuguese")
+					SubtFmt = MilesLanguageID::FAKEPORTUGUESE;
+				if (sFmt == L"latinspanish")
+					SubtFmt = MilesLanguageID::FAKELATINSPAN;
 
 				if (SubtFmt != (MilesLanguageID)ExportManager::Config.Get<System::SettingType::Integer>("AudioLanguage"))
 					ExportManager::Config.Set<System::SettingType::Integer>("AudioLanguage", (uint32_t)SubtFmt);
@@ -256,6 +276,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			std::unique_ptr<List<ApexAsset>> AssetList;
 
 			// load rpak flags
+			bool bLoadAll = cmdline.HasParam(L"--loadall");
 			bool bLoadModels = cmdline.HasParam(L"--loadmodels");
 			bool bLoadAnims = cmdline.HasParam(L"--loadanimations");
 			bool BLoadAnimSeqs = cmdline.HasParam(L"--loadanimationseqs");
@@ -267,7 +288,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			bool bLoadSettingsSets = cmdline.HasParam(L"--loadsettingssets");
 			bool bLoadRSONs = cmdline.HasParam(L"--loadrsons");
 
-			bool bNoFlagsSpecified = !bLoadModels && !bLoadAnims && !BLoadAnimSeqs && !bLoadImages && !bLoadMaterials && !bLoadUIImages && !bLoadDataTables && !bLoadShaderSets && !bLoadSettingsSets && !bLoadRSONs;
+			bool bNoFlagsSpecified = !bLoadAll && !bLoadModels && !bLoadAnims && !BLoadAnimSeqs && !bLoadImages && !bLoadMaterials && !bLoadUIImages && !bLoadDataTables && !bLoadShaderSets && !bLoadSettingsSets && !bLoadRSONs;
 
 			if (bNoFlagsSpecified)
 			{
@@ -287,6 +308,24 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 
 				AssetList = Rpak->BuildAssetList(bAssets);
 			}
+			else if (bLoadAll)
+			{
+				std::array<bool, 11> bAssets = {
+					true, // LoadModels
+					true, // LoadAnims
+					true, // LoadAnimSeqs
+					true, // LoadImages
+					true, // LoadMaterials
+					true, // LoadUIImages
+					true, // LoadDataTables
+					true, // LoadShaderSets
+					true, // LoadSettingsSets
+					true, // LoadRSONs
+					false // LoadEffects not ready yet.
+				};
+
+				AssetList = Rpak->BuildAssetList(bAssets);
+			}
 			else
 			{
 				std::array<bool, 11> bAssets = {
@@ -300,7 +339,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 					bLoadShaderSets,
 					bLoadSettingsSets,
 					bLoadRSONs,
-					false // not ready yet.
+					false // LoadEffects, not ready yet.
 				};
 
 				AssetList = Rpak->BuildAssetList(bAssets);

@@ -49,8 +49,8 @@ void ExportManager::InitializeExporter()
 
 	// init settings if they don't already exist
 	INIT_SETTING(Integer, "ModelFormat", (uint32_t)ModelExportFormat_t::Cast);
-	INIT_SETTING(Integer, "AnimFormat", (uint32_t)AnimExportFormat_t::Cast);
-	INIT_SETTING(Integer, "ImageFormat", (uint32_t)ImageExportFormat_t::Dds);
+	INIT_SETTING(Integer, "AnimFormat", (uint32_t)AnimExportFormat_t::SEAnim);
+	INIT_SETTING(Integer, "ImageFormat", (uint32_t)ImageExportFormat_t::Png);
 
 	INIT_SETTING(Boolean, "LoadModels", true);
 	INIT_SETTING(Boolean, "LoadAnimations", true);
@@ -58,11 +58,11 @@ void ExportManager::InitializeExporter()
 	INIT_SETTING(Boolean, "LoadImages", true);
 	INIT_SETTING(Boolean, "LoadMaterials", true);
 	INIT_SETTING(Boolean, "LoadUIImages", true);
-	INIT_SETTING(Boolean, "LoadDataTables", true);
-	INIT_SETTING(Boolean, "LoadShaderSets", true);
-	INIT_SETTING(Boolean, "LoadSettingsSets", true);
-	INIT_SETTING(Boolean, "LoadEffects", true);
-	INIT_SETTING(Boolean, "LoadRSONs", true);
+	INIT_SETTING(Boolean, "LoadDataTables", false);
+	INIT_SETTING(Boolean, "LoadShaderSets", false);
+	INIT_SETTING(Boolean, "LoadSettingsSets", false);
+	INIT_SETTING(Boolean, "LoadEffects", false);
+	INIT_SETTING(Boolean, "LoadRSONs", false);
 	INIT_SETTING(Boolean, "OverwriteExistingFiles", false);
 
 	Config.Save(ConfigPath);

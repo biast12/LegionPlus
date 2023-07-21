@@ -18,10 +18,9 @@ Originally created by DTZxPorter in 2019.
       - [Other Flags](#other-flags)
     - [Controls](#controls)
   - [Support](#support)
-  - [Known Issues](#known-issues)
 
 ## Installation
-To install Legion+, you may choose to either download the latest pre-compiled release from [the releases page](https://github.com/r-ex/LegionPlus/releases/latest), or compile the source code for yourself using the provided Visual Studio Solution file (.sln)
+To install Legion+, you may choose to either download the latest pre-compiled release from [the releases page](https://github.com/biast12/LegionPlus/releases/latest), or compile the source code for yourself using the provided Visual Studio Solution file (.sln)
 
 Compilation is currently only supported on Windows due to some platform-specific libraries that are required
 
@@ -43,6 +42,7 @@ When any load flag is used, your saved configuration is ignored and only the spe
 When multiple load flags are used together, all specified types will be loaded
 
 ```
+--loadall - This flag loads all the flags below
 --loadmodels
 --loadanimations
 --loadanimationseqs
@@ -63,8 +63,9 @@ Animations: --animfmt <seanim, cast, ranim>
 Images: --imgfmt <dds, png, tiff, tga>
 Text: --textfmt <csv, txt>
 Shadersets: --nmlrecalc <none, directx/dx, opengl/ogl>
-Audio Language: --audiolanguage <english, french, german, spanish, italian, japanese, polish, russian, mandarin, korean>
+Audio Language: --audiolanguage <english, french, german, spanish, italian, japanese, polish, russian, mandarin, korean, portuguese and latinspanish>
 MatCPU: --matcpu <none, struct, cpu>
+Audio: --audiofmt <wav, bink>
 ```
 `Example: LegionPlus.exe --export <path to rpak> --loadmodels --loadanimations --mdlfmt obj --animfmt seanim --imgfmt png`
 
@@ -92,17 +93,16 @@ Right Click - copies the names of the currently selected assets to clipboard
 
 Preview
 ```
-Alt + Left Click - move mouse to pivot camera around target
-Alt + Right Click - move mouse to zoom in and out of the target
-Alt + Middle Click - move mouse to pan camera
-```
+Models
+Left Click - move mouse to rotate camera around target
+Right Click - move mouse to pan camera
+Middle Click - move mouse to zoom in and out of the target
+
+Images
+Left Click - move mouse to pan camera
 ---
 
 ## Support
 If you encounter any issues or errors during your usage of Legion+, please let us know by opening a new Issue and providing as much detail as possible.
 
 We also have a [discord server](https://discord.gg/ADek6fxVGe) where you will be able to directly ask for support and receive updates about the project
-
-## Known Issues
-
-Full TODO/task list is available [here.](https://github.com/r-ex/LegionPlus/projects/1)

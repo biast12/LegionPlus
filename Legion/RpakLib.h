@@ -355,16 +355,16 @@ enum class AudioExportFormat_t
 
 enum class ImageExportFormat_t
 {
-	Dds,
 	Png,
+	Dds,
 	Tiff,
 	Tga,
 };
 
 enum class TextExportFormat_t
 {
-	CSV,
-	TXT
+	TXT,
+	CSV
 };
 
 enum class NormalRecalcType_t
@@ -377,6 +377,7 @@ enum class NormalRecalcType_t
 // this is bad
 enum class SubtitleLanguageHash : uint64_t
 {
+	Arabic = 0x846884d5d2e179d8,
 	English = 0x655f79f11377196a,
 	French = 0x3d5404cd608d7068,
 	German = 0x2f5ecc4608e4c647,
@@ -393,6 +394,7 @@ enum class SubtitleLanguageHash : uint64_t
 };
 
 static std::map<SubtitleLanguageHash, string> SubtitleLanguageMap{
+	{SubtitleLanguageHash::Arabic, "arabic"},
 	{SubtitleLanguageHash::English, "english"},
 	{SubtitleLanguageHash::French, "french"},
 	{SubtitleLanguageHash::German, "german"},
@@ -438,7 +440,7 @@ public:
 	// Initializes a anim exporter
 	void InitializeAnimExporter(AnimExportFormat_t Format = AnimExportFormat_t::SEAnim);
 	// Initializes a image exporter
-	void InitializeImageExporter(ImageExportFormat_t Format = ImageExportFormat_t::Dds);
+	void InitializeImageExporter(ImageExportFormat_t Format = ImageExportFormat_t::Png);
 
 	void ExportModel(const RpakLoadAsset& Asset, const string& Path, const string& AnimPath);
 	void ExportMaterial(const RpakLoadAsset& Asset, const string& Path);
