@@ -4,10 +4,9 @@ on:
   schedule:
     - cron: '*/60 * * * *'
   workflow_dispatch:
-  on:
-    push:
-      branches:
-        - main
+  push:
+    branches:
+      - main
 
 jobs:
   nightly:
