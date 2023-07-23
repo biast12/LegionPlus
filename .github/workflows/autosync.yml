@@ -17,6 +17,7 @@ jobs:
           owner: r-ex
           base: main
           head: main
+          merge_method: merge
           auto_approve: true
 
   nightly-trigger:
