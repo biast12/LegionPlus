@@ -12,23 +12,11 @@ jobs:
     steps:
       - uses: tgymnich/fork-sync@v1.8
         with:
+          owner: r-ex
           github_token: ${{secrets.GITHUB_TOKEN}}
           personal_token: ${{secrets.PERSONAL_TOKEN}}
-          owner: r-ex
           base: main
           head: main
           merge_method: merge
           auto_approve: true
-
-  nightly-trigger:
-    needs: sync
-    runs-on: ubuntu-latest
-    
-    steps:
-      - name: Trigger Nightly
-        uses: peter-evans/repository-dispatch@v1
-        with:
-          token: ${{secrets.PERSONAL_TOKEN}}
-          repository: biast12/LegionPlus
-          event-type: Autosync-DONE
-          ref: main
+          auto_merge: true

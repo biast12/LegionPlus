@@ -4,9 +4,10 @@ on:
   schedule:
     - cron: '*/60 * * * *'
   workflow_dispatch:
-  repository_dispatch:
-    types:
-      - Autosync-DONE
+  on:
+    push:
+      branches:
+        - main
 
 jobs:
   nightly:
