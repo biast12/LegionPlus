@@ -13,8 +13,7 @@ jobs:
       - uses: tgymnich/fork-sync@v1.8
         with:
           owner: r-ex
-          github_token: ${{secrets.GITHUB_TOKEN}}
-          personal_token: ${{secrets.PERSONAL_TOKEN}}
+          token: ${{secrets.PERSONAL_TOKEN}}
           base: main
           head: main
           merge_method: merge
