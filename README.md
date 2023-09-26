@@ -100,7 +100,7 @@ Middle Click - move mouse to zoom in and out of the target
 
 Images
 Left Click - move mouse to pan camera
----
+```
 
 ## Support
 If you encounter any issues or errors during your usage of Legion+, please let us know by opening a new Issue and providing as much detail as possible.
