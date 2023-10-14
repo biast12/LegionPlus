@@ -652,7 +652,7 @@ void LegionSettings::OnClose(const std::unique_ptr<FormClosingEventArgs>& EventA
 
 	// Fetch settings from controls
 	auto ModelExportFormat = ModelExportFormat_t::Cast;
-	auto AnimExportFormat = AnimExportFormat_t::SEAnim;
+	auto AnimExportFormat = AnimExportFormat_t::Cast;
 	auto ImageExportFormat = ImageExportFormat_t::Png;
 	auto TextExportFormat = TextExportFormat_t::TXT;
 	auto NormalRecalcType = NormalRecalcType_t::None;
