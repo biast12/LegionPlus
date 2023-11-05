@@ -1,0 +1,24 @@
+name: Discord Webhooks
+
+on:
+  push:
+    branches:
+      - main  # Specify the branch you want to filter
+
+jobs:
+  filter-and-notify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Filter Push Event by Branch
+        id: filter-branch
+        run: echo "Payload filtered by branch: $GITHUB_REF"
+
+      - name: Send Discord Notification
+        uses: Ilshidur/action-discord@v2
+        with:
+          type: plain
+          webhook_id: ${{ secrets.DISCORD_WEBHOOK_ID }}
+          webhook_token: ${{ secrets.DISCORD_WEBHOOK_TOKEN }}
+          content: |
+            Webhook triggered for the `main` branch.
