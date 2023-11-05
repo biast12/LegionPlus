@@ -2,7 +2,7 @@ name: Sync Fork
 
 on:
   schedule:
-    - cron: '*/5 * * * *'
+    - cron: '*/10 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -10,20 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Check for updates
-        id: check-updates
-        run: |
-          response=$(curl -s -H "Authorization: Bearer ${{secrets.PERSONAL_TOKEN}}" "https://api.github.com/repos/r-ex/main/compare/main...r-ex:main")
-          if [ "$(echo "$response" | jq -r '.status')" = "identical" ]; then
-            echo "No updates found. Exiting."
-            exit 0
-          fi
-        env:
-          GITHUB_TOKEN: ${{secrets.PERSONAL_TOKEN}}
-
-      - name: Sync Fork
-        if: steps.check-updates.outputs.status != 'identical'
-        uses: tgymnich/fork-sync@v1.8
+      - uses: tgymnich/fork-sync@v1.8
         with:
           owner: r-ex
           token: ${{secrets.PERSONAL_TOKEN}}
