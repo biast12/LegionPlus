@@ -10,10 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Filter Push Event by Branch
-        id: filter-branch
-        run: echo "Payload filtered by branch: $GITHUB_REF"
-
       - name: Send Discord Notification
         uses: Ilshidur/action-discord@v2
         with:
