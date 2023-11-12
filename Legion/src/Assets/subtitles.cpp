@@ -2,6 +2,7 @@
 #include "RpakLib.h"
 #include "Path.h"
 #include "Directory.h"
+#include <io.h>
 
 string RpakLib::GetSubtitlesNameFromHash(uint64_t Hash)
 {
@@ -26,6 +27,11 @@ void RpakLib::BuildSubtitleInfo(const RpakLoadAsset& Asset, ApexAsset& Info)
 
 void RpakLib::ExportSubtitles(const RpakLoadAsset& Asset, const string& Path)
 {
+	if (_access(Path, 00) == -1)
+	{
+		IO::Directory::CreateDirectory(IO::Path::Combine(Path, ""));
+	}
+
 	TextExportFormat_t Format = (TextExportFormat_t)ExportManager::Config.Get<System::SettingType::Integer>("TextFormat");
 
 	string sExtension = "";

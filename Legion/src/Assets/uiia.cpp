@@ -5,6 +5,7 @@
 #include "RpakImageTiles.h"
 #include <DDS.h>
 #include <rtech.h>
+#include <io.h>
 // this file could probably be renamed to be more generic ui stuff in the future
 
 void RpakLib::BuildUIIAInfo(const RpakLoadAsset& Asset, ApexAsset& Info)
@@ -55,6 +56,11 @@ void RpakLib::BuildUIIAInfo(const RpakLoadAsset& Asset, ApexAsset& Info)
 
 void RpakLib::ExportUIIA(const RpakLoadAsset& Asset, const string& Path)
 {
+	if (_access(Path, 00) == -1)
+	{
+		IO::Directory::CreateDirectory(IO::Path::Combine(Path, ""));
+	}
+
 	string DestinationPath = IO::Path::Combine(Path, string::Format("0x%llx%s", Asset.NameHash, (const char*)ImageExtension));
 
 	if (!Utils::ShouldWriteFile(DestinationPath)) // Ignore existing assets...
