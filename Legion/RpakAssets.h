@@ -1540,6 +1540,19 @@ struct RuiArg
 	short shortHash;
 };
 
+struct WrapAssetHeader_v7_t
+{
+	RPakPtr name;
+	RPakPtr data;
+	char unk[4];
+	int cmpSize;
+	int dcmpSize;
+	uint16_t nameLength;
+	char unk_2[4];
+	uint16_t flags; // wooooo more flags!!!!! i love flags!!!!! please give me more structs with flags!!!!
+	char unk_3[12];
+};
+
 #pragma pack(pop)
 
 

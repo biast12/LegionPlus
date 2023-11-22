@@ -63,6 +63,7 @@ void ExportManager::InitializeExporter()
 	INIT_SETTING(Boolean, "LoadSettingsSets", false);
 	INIT_SETTING(Boolean, "LoadEffects", false);
 	INIT_SETTING(Boolean, "LoadRSONs", false);
+	INIT_SETTING(Boolean, "LoadWrappedFiles", true);
 	INIT_SETTING(Boolean, "OverwriteExistingFiles", false);
 
 	Config.Save(ConfigPath);
@@ -221,6 +222,9 @@ void ExportManager::ExportRpakAssets(const std::unique_ptr<RpakLib>& RpakFileSys
 				break;
 			case (uint32_t)AssetType_t::RUI:
 				RpakFileSystem->ExportRUI(AssetToExport, IO::Path::Combine(ExportDirectory, "rui"));
+				break;
+			case (uint32_t)AssetType_t::Wrap:
+				RpakFileSystem->ExportWrappedFile(AssetToExport, IO::Path::Combine(ExportDirectory, "wrap"));
 				break;
 			}
 
