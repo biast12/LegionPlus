@@ -1,4 +1,4 @@
-name: Nightly release
+name: Upload Release
 
 on:
   workflow_dispatch:
@@ -34,32 +34,32 @@ jobs:
     - name: Build Legion+
       if: steps.commitswithintime.outputs.has-new-commits-within-time != 'false'
       working-directory: ${{env.GITHUB_WORKSPACE}}
-      run: msbuild /m . /p:Configuration=Release /p:PropertyPreprocessorDefinitions=NIGHTLY#${{env.SHA7}}
+      run: msbuild /m . /p:Configuration=Release
 
     - name: ZIP Executable
       if: steps.commitswithintime.outputs.has-new-commits-within-time != 'false'
       uses: vimtor/action-zip@v1
       with:
         files: bin/x64/Release/LegionPlus.exe
-        dest: Legion+Nightly.zip
+        dest: LegionPlus.zip
 
-    - name: Upload Nightly build
+    - name: Upload Release Build
       if: steps.commitswithintime.outputs.has-new-commits-within-time != 'false'
       uses: WebFreak001/deploy-nightly@v1.2.0
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       with:
-        upload_url: https://uploads.github.com/repos/biast12/LegionPlus/releases/102559614/assets{?name,label}
-        release_id: 102559614
-        asset_path: Legion+Nightly.zip
-        asset_name: Legion+Nightly.zip
+        upload_url: https://uploads.github.com/repos/biast12/LegionPlus/releases/131409444/assets{?name,label}
+        release_id: 131409444
+        asset_path: LegionPlus.zip
+        asset_name: LegionPlus.zip
         asset_content_type: application/zip
         max_releases: 1
 
-    - name: Update 'nightly' tag
+    - name: Update Release
       if: steps.commitswithintime.outputs.has-new-commits-within-time != 'false'
       uses: richardsimko/update-tag@v1.0.5
       with:
-        tag_name: 'nightly'
+        tag_name: 'Release'
       env:
         GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}

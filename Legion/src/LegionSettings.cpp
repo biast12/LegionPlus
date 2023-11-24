@@ -130,11 +130,7 @@ void LegionSettings::InitializeComponent()
 	this->labelVersion->SetSize({ 200, 20 });
 	this->labelVersion->SetLocation({ 12, 20 });
 	this->labelVersion->SetTabIndex(0);
-#ifndef NIGHTLY
-	this->labelVersion->SetText("Version " UI_VER_STR " (Stable)");
-#else
-	this->labelVersion->SetText("Version " UI_VER_STR "+" STRINGIZE(NIGHTLY) " (Nightly)");
-#endif
+	this->labelVersion->SetText("Version " UI_VER_STR);
 	this->labelVersion->SetAnchor(Forms::AnchorStyles::Top | Forms::AnchorStyles::Left);
 	this->labelVersion->SetTextAlign(Drawing::ContentAlignment::TopLeft);
 	this->groupBox3->AddControl(this->labelVersion);
