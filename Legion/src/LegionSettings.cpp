@@ -275,7 +275,7 @@ void LegionSettings::InitializeComponent()
 
 	//	Load WrappedFiles
 	this->LoadWrappedFiles = new UIX::UIXCheckBox();
-	this->LoadWrappedFiles->SetSize({ 108, 18 });
+	this->LoadWrappedFiles->SetSize({ 110, 18 });
 	this->LoadWrappedFiles->SetLocation({ 130, 135 });
 	this->LoadWrappedFiles->SetTabIndex(2);
 	this->LoadWrappedFiles->SetText("Load Wrapped Files");
