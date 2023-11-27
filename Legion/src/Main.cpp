@@ -287,12 +287,13 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 			bool bLoadShaderSets = cmdline.HasParam(L"--loadshadersets");
 			bool bLoadSettingsSets = cmdline.HasParam(L"--loadsettingssets");
 			bool bLoadRSONs = cmdline.HasParam(L"--loadrsons");
+			bool bLoadWrappedFiles = cmdline.HasParam(L"--loadwrappedfiles");
 
-			bool bNoFlagsSpecified = !bLoadAll && !bLoadModels && !bLoadAnims && !BLoadAnimSeqs && !bLoadImages && !bLoadMaterials && !bLoadUIImages && !bLoadDataTables && !bLoadShaderSets && !bLoadSettingsSets && !bLoadRSONs;
+			bool bNoFlagsSpecified = !bLoadAll && !bLoadModels && !bLoadAnims && !BLoadAnimSeqs && !bLoadImages && !bLoadMaterials && !bLoadUIImages && !bLoadDataTables && !bLoadShaderSets && !bLoadSettingsSets && !bLoadRSONs && !bLoadWrappedFiles;
 
 			if (bNoFlagsSpecified)
 			{
-				std::array<bool, 11> bAssets = {
+				std::array<bool, 12> bAssets = {
 					ExportManager::Config.GetBool("LoadModels"),
 					ExportManager::Config.GetBool("LoadAnimations"),
 					ExportManager::Config.GetBool("LoadAnimationSeqs"),
@@ -303,14 +304,15 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 					ExportManager::Config.GetBool("LoadShaderSets"),
 					ExportManager::Config.GetBool("LoadSettingsSets"),
 					ExportManager::Config.GetBool("LoadRSONs"),
-					ExportManager::Config.GetBool("LoadEffects")
+					ExportManager::Config.GetBool("LoadEffects"),
+					ExportManager::Config.GetBool("LoadWrappedFiles"),
 				};
 
 				AssetList = Rpak->BuildAssetList(bAssets);
 			}
 			else if (bLoadAll)
 			{
-				std::array<bool, 11> bAssets = {
+				std::array<bool, 12> bAssets = {
 					true, // LoadModels
 					true, // LoadAnims
 					true, // LoadAnimSeqs
@@ -321,14 +323,15 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 					true, // LoadShaderSets
 					true, // LoadSettingsSets
 					true, // LoadRSONs
-					false // LoadEffects not ready yet.
+					false, // LoadEffects not ready yet.
+					true // LoadWrappedFiles
 				};
 
 				AssetList = Rpak->BuildAssetList(bAssets);
 			}
 			else
 			{
-				std::array<bool, 11> bAssets = {
+				std::array<bool, 12> bAssets = {
 					bLoadModels,
 					bLoadAnims,
 					BLoadAnimSeqs,
@@ -339,7 +342,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLi
 					bLoadShaderSets,
 					bLoadSettingsSets,
 					bLoadRSONs,
-					false // LoadEffects, not ready yet.
+					false, // LoadEffects, not ready yet.
+					bLoadWrappedFiles
 				};
 
 				AssetList = Rpak->BuildAssetList(bAssets);
