@@ -6,6 +6,9 @@
 #include <typeinfo>
 #include <typeindex>
 
+#include <assets/shader.h>
+#include <assets/texture.h>
+
 const char* s_MaterialTypes[] = {
 	"RGDU",
 	"RGDP",
@@ -51,6 +54,7 @@ void RpakLib::BuildMaterialInfo(const RpakLoadAsset& Asset, ApexAsset& Info)
 
 	string MaterialName = Reader.ReadCString();
 
+	uint32_t textureSlotCount = (hdr.streamingTextureHandles.Offset - hdr.textureHandles.Offset) / 8;
 	if (ExportManager::Config.GetBool("UseFullPaths"))
 		Info.Name = MaterialName;
 	else
@@ -59,9 +63,7 @@ void RpakLib::BuildMaterialInfo(const RpakLoadAsset& Asset, ApexAsset& Info)
 	Info.Type = ApexAssetType::Material;
 	Info.Status = ApexAssetStatus::Loaded;
 
-	uint32_t TexturesCount = (hdr.streamingTextureHandles.Offset - hdr.textureHandles.Offset) / 8;
-
-	Info.Info = string::Format("Textures: %i", TexturesCount);
+	Info.Info = string::Format("Textures: %i", textureSlotCount);
 }
 
 void RpakLib::ExportMatCPUAsRaw(const RpakLoadAsset& Asset, MaterialHeader& MatHdr, MaterialCPUHeader& MatCPUHdr, std::ofstream& oStream)
@@ -280,7 +282,7 @@ RMdlMaterial RpakLib::ExtractMaterial(const RpakLoadAsset& Asset, const string& 
 	Result.MaterialName = IO::Path::GetFileNameWithoutExtension(fullMaterialName);
 	Result.FullMaterialName = fullMaterialName;
 
-	List<ShaderResBinding> PixelShaderResBindings;
+	Dictionary<uint32_t, ShaderResBinding> PixelShaderResBindings;
 
 	bool shadersetLoaded = Assets.ContainsKey(hdr.shaderSetGuid);
 
@@ -324,14 +326,12 @@ RMdlMaterial RpakLib::ExtractMaterial(const RpakLoadAsset& Asset, const string& 
 
 	const uint64_t TextureTable = this->GetFileOffset(Asset, hdr.textureHandles.Index, hdr.textureHandles.Offset); // (Asset.Version == RpakGameVersion::Apex) ? : this->GetFileOffset(Asset, hdr.TexturesTFIndex, hdr.TexturesTFOffset);
 	uint32_t TexturesCount = (hdr.streamingTextureHandles.Offset - hdr.textureHandles.Offset) / 8;
-	g_Logger.Info("> %i textures:\n", TexturesCount);
-
-	uint32_t bindingIdx = 0;
+	g_Logger.Info("> %i texture slots:\n", TexturesCount);
 
 	// These textures have named slots
 	for (uint32_t i = 0; i < TexturesCount; i++)
 	{
-		RpakStream->SetPosition(TextureTable + ((uint64_t)i * 8));
+		RpakStream->SetPosition(TextureTable + (i * 8ull));
 
 		uint64_t TextureHash = Reader.Read<uint64_t>();
 		string TextureName = "";
@@ -342,60 +342,59 @@ RMdlMaterial RpakLib::ExtractMaterial(const RpakLoadAsset& Asset, const string& 
 		{
 			TextureName = string::Format("0x%llx%s", TextureHash, (const char*)ImageExtension);
 
-			if (PixelShaderResBindings.Count() > 0 && bindingIdx < PixelShaderResBindings.Count())
+			if (PixelShaderResBindings.Count() > 0 && PixelShaderResBindings.ContainsKey(i))
 			{
-				string ResName = PixelShaderResBindings[bindingIdx].Name;
-				if (!ExportManager::Config.GetBool("UseTxtrGuids"))
-				{
-					TextureName = string::Format("%s_%s%s", Result.MaterialName.ToCString(), ResName.ToCString(), (const char*)ImageExtension);
-				}
 				bOverridden = true;
 
-				if (ResName == "normalTexture")
+				string resourceName = PixelShaderResBindings[i].Name;
+
+				if (!ExportManager::Config.GetBool("UseTxtrGuids"))
+					TextureName = string::Format("%s_%s%s", Result.MaterialName.ToCString(), resourceName.ToCString(), (const char*)ImageExtension);
+
+				if (resourceName == "normalTexture")
 					bNormalRecalculate = true;
 			}
 
-			if (Asset.Version == RpakGameVersion::Apex)
-				g_Logger.Info(">> %i: 0x%llx - %s\n", i, TextureHash, bOverridden ? TextureName.ToCString() : "(no assigned name)");
-
 			switch (i)
 			{
-			case 0:
+			case eTextureType::ALBEDO:
 				Result.AlbedoHash = TextureHash;
 				Result.AlbedoMapName = TextureName;
 				break;
-			case 1:
+			case eTextureType::NORMAL:
 				Result.NormalHash = TextureHash;
 				Result.NormalMapName = TextureName;
 				break;
-			case 2:
+			case eTextureType::GLOSS:
 				Result.GlossHash = TextureHash;
 				Result.GlossMapName = TextureName;
 				break;
-			case 3:
+			case eTextureType::SPECULAR:
 				Result.SpecularHash = TextureHash;
 				Result.SpecularMapName = TextureName;
 				break;
-			case 4:
+			case eTextureType::EMISSIVE:
 				Result.EmissiveHash = TextureHash;
 				Result.EmissiveMapName = TextureName;
 				break;
-			case 5:
+			case eTextureType::AO:
 				Result.AmbientOcclusionHash = TextureHash;
 				Result.AmbientOcclusionMapName = TextureName;
 				break;
-			case 6:
+			case eTextureType::CAVITY:
 				Result.CavityHash = TextureHash;
 				Result.CavityMapName = TextureName;
 				break;
 			}
-			bindingIdx++;
 
+
+			if (Asset.Version == RpakGameVersion::Apex)
+				g_Logger.Info(">> %i: 0x%llx - %s\n", i, TextureHash, bOverridden ? TextureName.ToCString() : "(no assigned name)");
 		}
 		else
 		{
 			if (Asset.Version == RpakGameVersion::Apex)
-				g_Logger.Info(">> %i: 0x0 - %s\n", i, "(no assigned name)");
+				g_Logger.Info(">> %i: empty\n", i);
 		}
 
 		// Extract to disk if need be
