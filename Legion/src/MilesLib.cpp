@@ -440,8 +440,13 @@ void MilesLib::MountBank(const string& Path)
 				}
 			}
 		}
-		else if (BankHeader.Version >= 28 && BankHeader.Version <= 32) {
-			// S2 -> S3
+		else if (BankHeader.Version >= 28 && BankHeader.Version <= 36) {
+			// S2 -> S5
+			// 
+			// s3 - 32
+			// s5 - 34
+			// s6 - 36
+
 			ReaderStream->SetPosition(*(uint64_t*)(uintptr_t(&BankHeader) + 0x48));
 			const auto NameTableOffset = *(uint64_t*)(uintptr_t(&BankHeader) + 0x70);
 			const auto LanguageSourcesCount = *(uint32_t*)(uintptr_t(&BankHeader) + 0x94);
