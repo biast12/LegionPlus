@@ -2773,6 +2773,8 @@ unsigned int __fastcall RTech::PakPatch_DecodeData(char* in_data, int numbits, c
 			//a4[i] = *p_table_data;
 			a4[i] = in_data[out_index] >> bit_size;
 			a5[i] = masked_in;
+			if (!counter)
+				break;
 		}
 		out_index++;
 

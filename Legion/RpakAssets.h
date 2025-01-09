@@ -755,6 +755,7 @@ public:
 		}
 		case 16:
 		case 17:
+		case 18:
 		{
 			ModelHeaderV16 mht = Reader.Read<ModelHeaderV16>();
 			studioData = mht.studioData;

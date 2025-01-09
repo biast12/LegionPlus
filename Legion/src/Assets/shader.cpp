@@ -59,6 +59,11 @@ void RpakLib::ExportShaderSet(const RpakLoadAsset& Asset, const string& Path)
 		PixelShaderGuid = Header.OldPixelShaderHash;
 		VertexShaderGuid = Header.OldVertexShaderHash;
 	}
+	else if (Asset.AssetVersion == 12)
+	{
+		PixelShaderGuid = Header.Old12PixelShaderHash;
+		VertexShaderGuid = Header.Old12VertexShaderHash;
+	}
 
 	if (!IO::Directory::Exists(ShaderSetPath))
 		IO::Directory::CreateDirectory(ShaderSetPath);

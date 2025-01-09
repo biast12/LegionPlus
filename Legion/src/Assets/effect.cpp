@@ -26,8 +26,8 @@ void RpakLib::BuildEffectInfo(const RpakLoadAsset& Asset, ApexAsset& Info)
 		RpakStream->SetPosition(this->GetFileOffset(Asset, effectData.effectName));
 		name = Reader.ReadCString();
 
-		RpakStream->SetPosition(this->GetFileOffset(Asset, effectData.effectPath));
-		path = Reader.ReadCString();
+		//RpakStream->SetPosition(this->GetFileOffset(Asset, effectData.effectPath));
+		//path = Reader.ReadCString();
 	}
 	else if (Asset.AssetVersion == 4)
 	{

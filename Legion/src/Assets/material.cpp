@@ -101,6 +101,9 @@ void RpakLib::ExportMatCPUAsStruct(const RpakLoadAsset& Asset, MaterialHeader& M
 
 	uint64_t PixelShaderGuid = ShaderSetHeader.PixelShaderHash;
 
+	if (ShaderSetAsset.AssetVersion == 12)
+		PixelShaderGuid = ShaderSetHeader.Old12PixelShaderHash;
+
 	if (ShaderSetAsset.AssetVersion <= 11)
 		PixelShaderGuid = ShaderSetHeader.OldPixelShaderHash;
 
@@ -293,6 +296,10 @@ RMdlMaterial RpakLib::ExtractMaterial(const RpakLoadAsset& Asset, const string& 
 
 		uint64_t PixelShaderGuid = ShaderSetHeader.PixelShaderHash;
 
+		if (ShaderSetAsset.AssetVersion == 12)
+		{
+			PixelShaderGuid = ShaderSetHeader.Old12PixelShaderHash;
+		}
 		if (ShaderSetAsset.AssetVersion <= 11)
 		{
 			PixelShaderGuid = ShaderSetHeader.OldPixelShaderHash;

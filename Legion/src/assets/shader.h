@@ -43,9 +43,12 @@ struct ShaderSetHeader {
 	uint64_t OldPixelShaderHash;
 
 	// only used for version 12+
+	uint64_t Old12VertexShaderHash;
+	uint64_t Old12PixelShaderHash;
+	uint64_t PixelShaderHashTF;
+	uint64_t unk;
 	uint64_t VertexShaderHash;
 	uint64_t PixelShaderHash;
-	uint64_t PixelShaderHashTF;
 
 };
 
